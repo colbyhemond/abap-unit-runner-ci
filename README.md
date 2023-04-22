@@ -38,3 +38,13 @@ If a unit test fails, an email will be sent to the user. Check transaction `SOST
   * Tests use same framework as when manually running unit tests in ADT or SAP GUI
   * Leverages Email template that includes ADT links for failed tests for quicker navigation
 
+# Comparisons
+This solution is not better than other out there, it simply helps fill a gap giving you another option to define your development/deployment workflow how you want it to work.
+
+## Other Options
+* Set up ATC rule to automatically run unit tests when a transport is released
+* Manually Run Unit Test on your class or package via SAP GUI or ADT in Eclipse
+* Run unit test with open-abap, where your test classes are transpiled to JavaScript and ran on a temporary node server
+
+All of these solutions have their place depending on when you want unit tests to be ran, and your development/deployment workflows
+
