@@ -51,8 +51,8 @@ try {
         classNames.push(file.split('.')[0])
     })
     console.log(classNames)
-    classFiles = []
-    if (classNames.length = 0) {
+
+    if (classNames.length === 0) {
         //no classes to run unit tests on
         return
     }
