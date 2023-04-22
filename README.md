@@ -32,8 +32,9 @@ If a unit test fails, an email will be sent to the user. Check transaction `SOST
 
 # Benefits
 * Tests all unit test classes of repository
-* Can be automatically triggered
-* Leverages SAP provided program to run the unit test
-  * Testing is consistent with manually running unit tests in ADT or SAP GUI
-  * Leverages Email template that includes ADT links for failed tests
+* Can be automatically triggered from Git Repositories
+* Automation is decoupled from transports
+* Leverages standard SAP provided program to run the unit tests:
+  * Tests use same framework as when manually running unit tests in ADT or SAP GUI
+  * Leverages Email template that includes ADT links for failed tests for quicker navigation
 
