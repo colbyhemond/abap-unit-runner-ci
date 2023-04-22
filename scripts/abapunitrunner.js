@@ -58,23 +58,22 @@ try {
 
     console.log('Running Unit Tests');
 
-    // axios.post(`${process.env.SAP_DEFAULT_HOST}/abapunitrunner/ci/runner`, {
-    //     class: classNames[0]
-    // },{
-    //     auth: {
-    //         username: process.env.SAP_USERNAME,
-    //         password: process.env.SAP_PASSWORD
-    //     }
-    // })
-    // .then((response) => {
-    //     //implement response of unit test statuses
-    //     console.log(response.status);
-    // })
-    // .catch((err) => {
-    //     //implement better error handling
-    //     console.log(err.status);
-    // })
-    
+    axios.post(`${process.env.SAP_DEFAULT_HOST}/abapunitrunner/ci/runner`, {
+        class: classNames[0]
+    },{
+        auth: {
+            username: process.env.SAP_USERNAME,
+            password: process.env.SAP_PASSWORD
+        }
+    })
+    .then((response) => {
+        //implement response of unit test statuses
+        console.log(response.status);
+    })
+    .catch((err) => {
+        //implement better error handling
+        console.log(err.status);
+    })
     
     
 } catch (err) {
