@@ -50,6 +50,7 @@ try {
     classFiles.map((file) => {
         classNames.push(file.split('.')[0])
     })
+    console.log(classNames)
     classFiles = []
     if (classNames.length = 0) {
         //no classes to run unit tests on
@@ -57,7 +58,7 @@ try {
     }
 
     console.log('Running Unit Tests');
-
+    console.log(classNames)
     axios.post(`${process.env.SAP_DEFAULT_HOST}/abapunitrunner/ci/runner`, {
         class: classNames[0]
     },{
