@@ -29,6 +29,12 @@ const filterClassFiles = (fileList, root) => {
 
 try {
 
+    console.log('Testing');
+    console.log(process.env.SAP_DEFAULT_HOST)
+    console.log(process.env.sap_default_host)
+    console.log($SAP_DEFAULT_HOST)
+    console.log($process.env.SAP_DEFAULT_HOST)
+
     if (process.env.SAP_DEFAULT_HOST === undefined) {
         throw('env SAP_DEFAULT_HOST is undefined')
     }
@@ -50,23 +56,23 @@ try {
         //no classes to run unit tests on
         return
     }
-    
-    axios.post(`${process.env.SAP_DEFAULT_HOST}/abapunitrunner/ci/runner`, {
-        class: classNames[0]
-    },{
-        auth: {
-            username: process.env.SAP_USERNAME,
-            password: process.env.SAP_PASSWORD
-        }
-    })
-    .then((response) => {
-        //implement response of unit test statuses
-        console.log(response.status);
-    })
-    .catch((err) => {
-        //implement better error handling
-        console.log(err.status);
-    })
+
+    // axios.post(`${process.env.SAP_DEFAULT_HOST}/abapunitrunner/ci/runner`, {
+    //     class: classNames[0]
+    // },{
+    //     auth: {
+    //         username: process.env.SAP_USERNAME,
+    //         password: process.env.SAP_PASSWORD
+    //     }
+    // })
+    // .then((response) => {
+    //     //implement response of unit test statuses
+    //     console.log(response.status);
+    // })
+    // .catch((err) => {
+    //     //implement better error handling
+    //     console.log(err.status);
+    // })
     
     
     
