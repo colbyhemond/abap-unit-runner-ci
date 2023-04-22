@@ -46,6 +46,7 @@ try {
     const data = fs.readdirSync(root, 'utf8');
     let classFiles = filterClassFiles(data, root)
     let classNames = []
+    console.log(classFiles);
     classFiles.map((file) => {
         classNames.push(file.split('.')[0])
     })
