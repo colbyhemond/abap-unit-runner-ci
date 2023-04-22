@@ -11,6 +11,12 @@ It can be triggered when abap code is merged into `main` or a pull request is op
 * clone into your SAP system via abapGit
 * activate ICF Nodes `/abapunitrunner/ci/runner` via transaction code `SICF`
 * Set up pipeline task
+* Add environment variables to your pipeline:
+  * `SAP_USERNAME`
+  * `SAP_PASSWORD`
+  * `SAP_DEFAULT_HOST`
+  * **MAKE SURE THESE DETAILS ARE SECURE! mAKE SURE YOU DO NOT PUSH THESE VALUES TO A PUBLIC (OR PRIVATE) REPOSITORY!**
+
 
 ## Pipeline Task for Azure Dev Ops
 ``` yaml
