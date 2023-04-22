@@ -29,11 +29,7 @@ const filterClassFiles = (fileList, root) => {
 
 try {
 
-    console.log('Testing');
-    console.log(process.env.SAP_DEFAULT_HOST)
-    console.log(process.env.sap_default_host)
-    console.log($SAP_DEFAULT_HOST)
-    console.log($process.env.SAP_DEFAULT_HOST)
+    console.log('Checking Variables');
 
     if (process.env.SAP_DEFAULT_HOST === undefined) {
         throw('env SAP_DEFAULT_HOST is undefined')
@@ -44,6 +40,8 @@ try {
     if (process.env.SAP_PASSWORD === undefined) {
         throw('env SAP_PASSWORD is undefined')
     }
+
+    console.log('Preparing Files');
 
     const data = fs.readdirSync(root, 'utf8');
     let classFiles = filterClassFiles(data, root)
@@ -56,6 +54,8 @@ try {
         //no classes to run unit tests on
         return
     }
+
+    console.log('Running Unit Tests');
 
     // axios.post(`${process.env.SAP_DEFAULT_HOST}/abapunitrunner/ci/runner`, {
     //     class: classNames[0]
