@@ -1,7 +1,7 @@
 *Not Complete - Work in Progress - Open to help and ideas*
 
 # ABAP Unit Runner
-This repository is meant for Continuous Integration pipelines.
+This repository is meant for Continuous Integration pipelines, with your common shared development environment in mind.
 
 It provides the capability to call into your SAP system in order to run the unit tests.
 
@@ -11,7 +11,17 @@ It can be triggered when abap code is merged into `main` or a pull request is op
 * clone into your SAP system via abapGit
 * activate ICF Nodes `/abapunitrunner/ci/runner` via transaction code `SICF`
 * Set up pipeline task
-  * Examples coming soon
+
+## Pipeline Task for Azure Dev Ops
+``` yaml
+steps:
+- script: |
+    echo installing abap-unit-runner-cli
+    npm install https://github.com/colbyhemond/abap-unit-runner-ci.git
+    echo running abap unit
+    npm run abap-unit
+  displayName: 'ABAP Unit Tests'
+```
 
 # How it works
 The script traverses the file directory of the repository looking for any `.clas.abap` files and then submits them to the endpoint `/abapunitrunner/ci/runner` where the class to be unit tested is submitted to program `rs_aucv_runner`.
