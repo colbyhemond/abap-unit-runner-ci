@@ -27,7 +27,7 @@ const filterClassFiles = (fileList, root) => {
     return classFiles
 }
 
-try {
+// try {
 
     console.log('Checking Variables');
 
@@ -46,11 +46,10 @@ try {
     const data = fs.readdirSync(root, 'utf8');
     let classFiles = filterClassFiles(data, root)
     let classNames = []
-    console.log(classFiles);
+
     classFiles.map((file) => {
         classNames.push(file.split('.')[0])
     })
-    console.log(classNames)
 
     if (classNames.length === 0) {
         //no classes to run unit tests on
@@ -77,6 +76,6 @@ try {
     })
     
     
-} catch (err) {
-    console.error(err);
-}
+// } catch (err) {
+//     console.error(err);
+// }
