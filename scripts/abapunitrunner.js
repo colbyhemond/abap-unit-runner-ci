@@ -27,7 +27,7 @@ const filterClassFiles = (fileList, root) => {
     return classFiles
 }
 
-// try {
+try {
 
     console.log('Checking Variables');
 
@@ -72,10 +72,11 @@ const filterClassFiles = (fileList, root) => {
     })
     .catch((err) => {
         //implement better error handling
-        console.log(err.status);
+        throw (err)
     })
     
     
-// } catch (err) {
-//     console.error(err);
-// }
+} catch (err) {
+    console.error(err);
+    process.exit(1)
+}
