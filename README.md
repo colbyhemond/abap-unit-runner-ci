@@ -1,5 +1,3 @@
-*Not Complete - Work in Progress - Open to help and ideas*
-
 # ABAP Unit Runner
 This repository is meant for Continuous Integration pipelines, with your common shared development environment in mind.
 
@@ -19,6 +17,7 @@ It can be triggered when abap code is merged into `main` or a pull request is op
 
 
 ## Pipeline Task for Azure Dev Ops
+[Create your first pipeline with with Azure pipelines](https://learn.microsoft.com/en-us/azure/devops/pipelines/create-first-pipeline?view=azure-devops&tabs=javascript%2Ctfs-2018-2%2Cbrowser)
 ``` yaml
 steps:
 - script: |
