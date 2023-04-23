@@ -17,22 +17,63 @@ CLASS ZCL_ABAP_UNIT_RUNNER_HANDLER IMPLEMENTATION.
 
   METHOD if_http_extension~handle_request.
 
-    data(data_xstring) = server->request->get_cdata( ).
+    TYPES:
+      BEGIN OF ty_abapunit_runner_data,
+        class TYPE string,
+      END OF ty_abapunit_runner_data.
 
+    TYPES:
+      BEGIN OF ty_response_data,
+        result TYPE zif_abap_unit_runner=>ty_runner_result,
+      END OF ty_response_data.
 
+    DATA abapunit_runner_data TYPE ty_abapunit_runner_data.
+    DATA response_data TYPE ty_response_data.
 
-    if 1 = 2. endif.
+    TRY.
 
-*    DATA(abap_unit_runner) = zcl_abap_unit_runner=>create( ).
-*
-*    abap_unit_runner->run_class( 'test' ).
+        DATA(json_data) = server->request->get_cdata( ).
 
-    server->response->set_status(
-      EXPORTING
-        code          = '200'               " HTTP Status Code
-        reason        = 'No Coffee'                 " HTTP status description
-*        detailed_info =
-    ).
+        /ui2/cl_json=>deserialize(
+          EXPORTING
+            json             = json_data                 " JSON string
+          CHANGING
+            data             = abapunit_runner_data                " Data to serialize
+        ).
+
+        DATA(abap_unit_runner) = zcl_abap_unit_runner=>create( ).
+
+        response_data-result = abap_unit_runner->run_class( CONV #( abapunit_runner_data-class ) ).
+
+        DATA(response_json) = /ui2/cl_json=>serialize(
+          data = response_data
+          pretty_name = abap_true ).
+
+        server->response->set_cdata( response_json ).
+
+        server->response->set_status(
+          EXPORTING
+            code          = '200'               " HTTP Status Code
+            reason        = 'Unit Tests Processed'         " HTTP status description
+        ).
+
+      CATCH zcx_abap_unit_runner.
+
+        server->response->set_status(
+          EXPORTING
+            code          = '500'               " HTTP Status Code
+            reason        = 'zcx_abap_unit_runner exception occured'         " HTTP status description
+        ).
+
+      CATCH cx_static_check.
+
+        server->response->set_status(
+          EXPORTING
+            code          = '500'               " HTTP Status Code
+            reason        = 'Unknown exception occured'         " HTTP status description
+        ).
+
+    ENDTRY.
 
   ENDMETHOD.
 ENDCLASS.

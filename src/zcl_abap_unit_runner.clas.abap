@@ -31,6 +31,21 @@ CLASS ZCL_ABAP_UNIT_RUNNER IMPLEMENTATION.
           name             TYPE tbtcjob-jobname VALUE '/CI/ABAP_UNIT_RUNNER',
           print_parameters TYPE pri_params.
 
+    DATA email_address TYPE ad_smtpadr.
+
+    IF iv_email_address = space.
+      SELECT adr6~smtp_addr
+        FROM adr6
+       INNER JOIN usr21
+          ON usr21~persnumber = adr6~persnumber
+         AND usr21~addrnumber = adr6~addrnumber
+       WHERE usr21~bname = @sy-uname
+        INTO @email_address.
+      ENDSELECT.
+    ELSE.
+      email_address = iv_email_address.
+    ENDIF.
+
     CALL FUNCTION 'JOB_OPEN'
       EXPORTING
         jobname          = name
@@ -41,13 +56,14 @@ CLASS ZCL_ABAP_UNIT_RUNNER IMPLEMENTATION.
         invalid_job_data = 2
         jobname_missing  = 3
         OTHERS           = 4.
+
     IF sy-subrc = 0.
 
       SUBMIT rs_aucv_runner
         VIA JOB name NUMBER number
         WITH b_obj = abap_true
         WITH so_class-low = iv_class_name
-        WITH so_email-low = 'chemond@bowdark.com'
+        WITH so_email-low = email_address
       AND RETURN.
 
       IF sy-subrc = 0.
@@ -66,16 +82,15 @@ CLASS ZCL_ABAP_UNIT_RUNNER IMPLEMENTATION.
             lock_failed          = 7
             OTHERS               = 8.
         IF sy-subrc <> 0.
-          MESSAGE |Error on Job Close. Exception { sy-subrc }.| TYPE 'E'.
+*          MESSAGE |Error on Job Close. Exception { sy-subrc }.| TYPE 'E'.
+          RAISE EXCEPTION TYPE zcx_abap_unit_runner.
         ENDIF.
       ELSE.
         DATA(msg) = cl_abap_submit_handling=>get_error_message( ).
-        MESSAGE ID msg-msgid
-                TYPE 'I'
-                NUMBER msg-msgno
-                WITH msg-msgv1 msg-msgv2 msg-msgv3 msg-msgv4
-                DISPLAY LIKE msg-msgty.
+        RAISE EXCEPTION TYPE zcx_abap_unit_runner.
       ENDIF.
+    ELSE.
+      RAISE EXCEPTION TYPE zcx_abap_unit_runner.
     ENDIF.
 
     DATA status TYPE btcstatus.
@@ -97,8 +112,7 @@ CLASS ZCL_ABAP_UNIT_RUNNER IMPLEMENTATION.
           parent_child_inconsistency = 3
           OTHERS                     = 4.
       IF sy-subrc <> 0.
-        MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
-          WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+        RAISE EXCEPTION TYPE zcx_abap_unit_runner.
       ENDIF.
 
       " Status':
@@ -115,10 +129,6 @@ CLASS ZCL_ABAP_UNIT_RUNNER IMPLEMENTATION.
       ENDIF.
 
     ENDDO.
-
-
-
-
 
     """ Read Job Log
     DATA joblog_entries TYPE STANDARD TABLE OF tbtc5.
@@ -143,10 +153,17 @@ CLASS ZCL_ABAP_UNIT_RUNNER IMPLEMENTATION.
         job_does_not_exist    = 7                " Job Already Deleted
         OTHERS                = 8.
     IF sy-subrc <> 0.
-      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
-        WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+      RAISE EXCEPTION TYPE zcx_abap_unit_runner.
     ENDIF.
 
+    LOOP AT joblog_entries ASSIGNING FIELD-SYMBOL(<log_entry>).
+      IF <log_entry>-text CS 'Email has been sent' AND <log_entry>-text CS 'emails were sent'.
+        rv_result = zif_abap_unit_runner=>co_runner_result_vals-fail.
+        RETURN.
+      ENDIF.
+    ENDLOOP.
+
+    rv_result = zif_abap_unit_runner=>co_runner_result_vals-pass.
 
   ENDMETHOD.
 ENDCLASS.
