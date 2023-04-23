@@ -153,7 +153,39 @@ CLASS ZCL_ABAP_UNIT_RUNNER IMPLEMENTATION.
         job_does_not_exist    = 7                " Job Already Deleted
         OTHERS                = 8.
     IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE zcx_abap_unit_runner.
+      WAIT UP TO 1 SECONDS.
+      CALL FUNCTION 'BP_JOBLOG_READ'
+        EXPORTING
+*         client                = SY-MANDT         " Job Clients
+          jobcount              = number            " Job identification no.
+*         joblog                = space            " Name of Job Log in TemSe Database
+          jobname               = name            " Job Name
+*         lines                 =                  " No. of Lines
+*         direction             =                  " Read Direction (B = From Beginning, E = From End)
+        TABLES
+          joblogtbl             = joblog_entries                 " Job Log Entries in List Format
+        EXCEPTIONS
+          cant_read_joblog      = 1
+          jobcount_missing      = 2
+          joblog_does_not_exist = 3                " Log Not Found in TemSe Database
+          joblog_is_empty       = 4                " Log is Empty
+          joblog_name_missing   = 5
+          jobname_missing       = 6                " Job Name Not Specified
+          job_does_not_exist    = 7                " Job Already Deleted
+          OTHERS                = 8.
+      IF sy-subrc <> 0.
+        RAISE EXCEPTION TYPE zcx_abap_unit_runner
+*        EXPORTING
+*          textid                 =
+*          previous               =
+*          message_container      =
+*          http_status_code       =
+*          http_header_parameters =
+*          sap_note_id            =
+*          msg_code               =
+*          exception_category     =
+          .
+      ENDIF.
     ENDIF.
 
     LOOP AT joblog_entries ASSIGNING FIELD-SYMBOL(<log_entry>).
