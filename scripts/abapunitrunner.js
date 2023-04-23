@@ -75,7 +75,12 @@ try {
 
     })
     .catch((err) => {
-        console.error(err)
+        if (err.response) {
+            console.error(err.response.status)
+            console.error(err.response.statusText)
+        } else {
+            console.error(err)
+        }
         process.exit(1)
     })
     
