@@ -52,8 +52,7 @@ try {
     })
 
     if (classNames.length === 0) {
-        //no classes to run unit tests on
-        return
+        process.exit(0)
     }
 
     console.log('Running Unit Tests');
@@ -69,12 +68,16 @@ try {
     .then((response) => {
         //implement response of unit test statuses
         console.log(response.status);
+        console.log(response.data)
+        if( response.data.result === 'FAIL') {
+            throw('A Unit Test FAILED - See Email (or transaction SOST)')
+        }
+
     })
     .catch((err) => {
-        //implement better error handling
-        throw (err)
+        console.error(err)
+        process.exit(1)
     })
-    
     
 } catch (err) {
     console.error(err);
