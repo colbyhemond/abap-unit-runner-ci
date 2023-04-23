@@ -1,5 +1,3 @@
-*Not Complete - Work in Progress - Open to help and ideas*
-
 # ABAP Unit Runner
 This repository is meant for Continuous Integration pipelines, with your common shared development environment in mind.
 
