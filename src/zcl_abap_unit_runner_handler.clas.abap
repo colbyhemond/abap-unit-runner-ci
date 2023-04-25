@@ -57,15 +57,17 @@ CLASS ZCL_ABAP_UNIT_RUNNER_HANDLER IMPLEMENTATION.
             reason        = 'Unit Tests Processed'         " HTTP status description
         ).
 
-      CATCH zcx_abap_unit_runner.
+      CATCH /iwbep/cx_mgw_base_exception INTO DATA(iwbep_exception).
+
+        DATA(messages) = iwbep_exception->get_msg_container( )->get_messages( ).
 
         server->response->set_status(
           EXPORTING
             code          = '500'               " HTTP Status Code
-            reason        = 'zcx_abap_unit_runner exception occured'         " HTTP status description
+            reason        = CONV #( messages[ 1 ]-message )         " HTTP status description
         ).
 
-      CATCH cx_static_check.
+      CATCH cx_static_check INTO DATA(exception).
 
         server->response->set_status(
           EXPORTING
