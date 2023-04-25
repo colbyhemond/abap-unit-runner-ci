@@ -13,6 +13,19 @@ CLASS zcl_abap_unit_runner DEFINITION
           VALUE(instance) TYPE REF TO zif_abap_unit_runner.
   PROTECTED SECTION.
   PRIVATE SECTION.
+
+    METHODS:
+      select_email_address
+        RETURNING
+          VALUE(rv_result) TYPE ad_smtpadr.
+
+    METHODS:
+      submit_runner
+        IMPORTING
+          iv_name          TYPE tbtcjob-jobname
+          iv_number        TYPE tbtcjob-jobcount
+          iv_class_name    TYPE seoclsname
+          iv_email_address TYPE ad_smtpadr.
 ENDCLASS.
 
 
@@ -27,23 +40,13 @@ CLASS ZCL_ABAP_UNIT_RUNNER IMPLEMENTATION.
 
   METHOD zif_abap_unit_runner~run_class.
 
-    DATA: "number           TYPE tbtcjob-jobcount,
-      name             TYPE tbtcjob-jobname VALUE '/CI/ABAP_UNIT_RUNNER',
-      print_parameters TYPE pri_params.
+    DATA: name TYPE tbtcjob-jobname VALUE '/CI/ABAP_UNIT_RUNNER'.
+    DATA email_address TYPE ad_smtpadr.
 
     TRY.
 
-        DATA email_address TYPE ad_smtpadr.
-
         IF iv_email_address = space.
-          SELECT adr6~smtp_addr
-            FROM adr6
-           INNER JOIN usr21
-              ON usr21~persnumber = adr6~persnumber
-             AND usr21~addrnumber = adr6~addrnumber
-           WHERE usr21~bname = @sy-uname
-            INTO @email_address.
-          ENDSELECT.
+          email_address = select_email_address( ).
         ELSE.
           email_address = iv_email_address.
         ENDIF.
@@ -52,26 +55,27 @@ CLASS ZCL_ABAP_UNIT_RUNNER IMPLEMENTATION.
 
         DATA(number) = background_job->open( ).
 
-        SUBMIT rs_aucv_runner
-          VIA JOB name NUMBER number
-          WITH b_obj = abap_true
-          WITH so_class-low = iv_class_name
-          WITH so_email-low = email_address
-        AND RETURN.
+        submit_runner(
+          EXPORTING
+            iv_name          = name
+            iv_number        = number
+            iv_class_name    = iv_class_name
+            iv_email_address = email_address
+        ).
 
         IF sy-subrc = 0.
           background_job->close( ).
         ELSE.
           DATA(msg) = cl_abap_submit_handling=>get_error_message( ).
-
           RAISE EXCEPTION TYPE zcx_abap_unit_runner.
         ENDIF.
 
-        WAIT UNTIL background_job->is_running( ) = abap_false UP TO 5 SECONDS.
+        WAIT UNTIL background_job->is_running( ) = abap_false UP TO 10 SECONDS.
 
         DATA(joblog_entries) = background_job->get_joblog( ).
 
-        IF sy-subrc <> 0.
+        IF lines( joblog_entries ) = 0.
+          "try one more time
           WAIT UP TO 1 SECONDS.
           joblog_entries = background_job->get_joblog( ).
         ENDIF.
@@ -92,6 +96,32 @@ CLASS ZCL_ABAP_UNIT_RUNNER IMPLEMENTATION.
             message_container = bg_exception->get_msg_container( ).
 
     ENDTRY.
+
+  ENDMETHOD.
+
+
+  METHOD select_email_address.
+
+    SELECT adr6~smtp_addr
+      FROM adr6
+     INNER JOIN usr21
+        ON usr21~persnumber = adr6~persnumber
+       AND usr21~addrnumber = adr6~addrnumber
+     WHERE usr21~bname = @sy-uname
+      INTO @rv_result.
+    ENDSELECT.
+
+  ENDMETHOD.
+
+
+  METHOD submit_runner.
+
+    SUBMIT rs_aucv_runner
+       VIA JOB iv_name NUMBER iv_number
+      WITH b_obj = abap_true
+      WITH so_class-low = iv_class_name
+      WITH so_email-low = iv_email_address
+    AND RETURN.
 
   ENDMETHOD.
 ENDCLASS.
