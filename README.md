@@ -53,3 +53,8 @@ This solution is not better than other out there, it simply helps fill a gap giv
 
 All of these solutions have their place depending on when you want unit tests to be ran, and your development/deployment workflows
 
+## Additional Resources on CI/CD with ABAP
+* [SAP Press Blog - ABAP and Continuous Integration: the ABAP Test Cockpit and the ABAP Unit Runner](https://blog.sap-press.com/abap-and-continuous-integration-the-abap-test-cockpit-and-the-abap-unit-runner)
+* [Lars Hvam - So, what is CI?](https://blogs.sap.com/2020/12/28/so-what-is-ci/)
+* [Lars Hvam - Fully supporting CI in ABAP AS](https://blogs.sap.com/2020/02/20/fully-supporting-ci-in-abap-as/)
+
