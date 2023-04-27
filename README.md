@@ -1,9 +1,11 @@
 # ABAP Unit Runner
 This repository is meant for Continuous Integration pipelines, with your common shared development environment in mind.
 
-It provides the capability to call into your SAP system in order to run the unit tests.
+It provides the capability to call into your SAP system in order to run the unit tests that have been developed in there.
 
-It can be triggered when abap code is merged into `main` or a pull request is opened, and allows all abap unit tests within the repository to be ran. 
+It can be triggered when abap code is merged into `main` or a pull request is opened, and allows all abap unit tests within the repository to be ran.
+
+This is a decent starting point for implementing CI into your deployment workflow. If your team is too big, or your packages are too big, you could possibly start to see where further organization or isolated development systems could help.
 
 # Set Up
 * clone into your SAP system via abapGit
@@ -42,6 +44,11 @@ If a unit test fails, an email will be sent to the user. Check transaction `SOST
 * Leverages standard SAP provided program to run the unit tests:
   * Tests use same framework as when manually running unit tests in ADT or SAP GUI
   * Leverages Email template that includes ADT links for failed tests for quicker navigation
+  
+# Drawbacks
+* If too many developers use the same dev sytem, and mutliple developers are creating unit tests in the same package, someones temporary failing test might affectwhen the CI step runs all the tests
+  * You can create morne granular packages and work on managing coupling in your application to possible help this
+  * If this can't be avoided, then you are in the same kind of bottle neck as "locked objects with transports" and suggest re-examining your CI plan. (add isolated system, unit test with transpoiled abap, etc..)
 
 # Comparisons
 This solution is not better than other out there, it simply helps fill a gap giving you another option to define your development/deployment workflow how you want it to work.
